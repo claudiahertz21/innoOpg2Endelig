@@ -225,7 +225,7 @@ const firebaseAppStorage = initializeApp(firebaseConfigStorage, 'storage');
     setNewImage({ ...newImage, imageURI: uri });
   };
 
-  const handleImageUpload = async () => {
+  /*const handleImageUpload = async () => {
     try {
       if (!newImage.imageURI || !newImage.selectedTag) {
         return Alert.alert('Please select an image and a tag to upload.');
@@ -242,6 +242,30 @@ const firebaseAppStorage = initializeApp(firebaseConfigStorage, 'storage');
 
       setImagesArr([newImage.imageURI, ...imagesArr]);
 
+      setNewImage(initialState);
+      Alert.alert('Image uploaded successfully.');
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      Alert.alert('Error uploading image');
+    }
+  };*/
+  const handleImageUpload = async () => {
+    try {
+      if (!newImage.imageURI || !newImage.selectedTag) {
+        return Alert.alert('Please select an image and a tag to upload.');
+      }
+  
+      const imagesRef = ref(db, '/Images/');
+  
+      const newImageData = {
+        imageURI: newImage.imageURI,
+        tags: [newImage.selectedTag], // Store tags in an array
+      };
+  
+      await push(imagesRef, newImageData);
+  
+      setImagesArr([{ uri: newImage.imageURI, tags: [newImage.selectedTag] }, ...imagesArr]);
+  
       setNewImage(initialState);
       Alert.alert('Image uploaded successfully.');
     } catch (error) {
@@ -282,7 +306,7 @@ const firebaseAppStorage = initializeApp(firebaseConfigStorage, 'storage');
             onValueChange={(value) => setNewImage({ ...newImage, selectedTag: value })}
             items={[
               { label: 'Animals', value: 'animals' },
-              { label: 'Color', value: 'Color' },
+              { label: 'Color', value: 'color' },
               // Add more tags as needed
             ]}
           />

@@ -162,6 +162,7 @@ const firebaseAppStorage = initializeApp(firebaseConfigStorage, 'storage');
 export default InspirationScreen; 
 
 */
+/*
 import React, { useState, useEffect } from 'react';
 import { View, Image, StyleSheet, Text, FlatList, Dimensions } from 'react-native';
 import { getDatabase, ref, onValue } from 'firebase/database';
@@ -239,3 +240,79 @@ function InspirationScreen() {
 
 export default InspirationScreen;
 
+*/
+import React, { useState, useEffect } from 'react';
+import { View, Image, FlatList } from 'react-native';
+import { getDatabase, ref, onValue } from 'firebase/database';
+import { initializeApp } from "firebase/app";
+import { SearchBar } from 'react-native-elements';
+import GlobalStyles from '../globalStyling/GlobalStyles';
+
+const columnCount = 2;
+
+
+const firebaseConfigStorage = {
+  apiKey: "AIzaSyCK6BHAOLDMY-8-CHT_LWQYbMLIkfPxHho",
+  authDomain: "database-6fbce.firebaseapp.com",
+  databaseURL: "https://database-6fbce-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "database-6fbce",
+  storageBucket: "database-6fbce.appspot.com",
+  messagingSenderId: "718630363488",
+  appId: "1:718630363488:web:ee7efb7f65d1092d837e05"
+};
+
+function InspirationScreen() {
+  const firebaseAppStorage = initializeApp(firebaseConfigStorage, 'storage');
+  const db = getDatabase(firebaseAppStorage);
+
+  const [imagesArr, setImagesArr] = useState([]);
+  const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    const imagesRef = ref(db, 'Images');
+
+    const handleData = (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const images = Object.entries(data).map(([key, value]) => ({ key, ...value }));
+        setImagesArr(images.reverse());
+      }
+    };
+
+    const unsubscribe = onValue(imagesRef, handleData);
+
+    return () => {
+      unsubscribe();
+    };
+  }, [db]);
+
+  const renderItem = ({ item }) => (
+    <View style={GlobalStyles.imageContainer}>
+      <Image source={{ uri: item.imageURI }} style={GlobalStyles.image} />
+    </View>
+  );
+
+  return (
+    <View style={GlobalStyles.inspirationContainer}>
+      <SearchBar
+        placeholder="Search..."
+        onChangeText={(text) => setSearch(text)}
+        value={search}
+        containerStyle={GlobalStyles.searchBarContainerInspiration}
+        inputContainerStyle={GlobalStyles.searchBarInputContainerInspiration}
+      />
+
+      <FlatList
+        data={imagesArr.filter((item) =>
+          item.tags && item.tags.some((tag) => tag.toLowerCase().includes(search.toLowerCase()))
+        )}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.key}
+        numColumns={columnCount}
+        contentContainerStyle={GlobalStyles.InspirationContainer}
+      />
+    </View>
+  );
+}
+
+export default InspirationScreen;
