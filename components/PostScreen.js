@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useRef, useState} from "react";
+/*import React, {Fragment, useEffect, useRef, useState} from "react";
 import {Camera} from "expo-camera";
 import {Button, Image, Linking, Platform, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -123,18 +123,18 @@ const PostScreen = ({navigation}) => {
                                 <Text style={GlobalStyles.text}> Flip </Text>
                             </TouchableOpacity>
 
-                            {/*Tag billede*/}
+                            {Tag billede}
                             <TouchableOpacity
                                 style={GlobalStyles.button}
                                 onPress={snap}
                             >
-                                {/*Hvis der er loading, vises dette, ellers vises "Tag billede"*/}
+                                {/*Hvis der er loading, vises dette, ellers vises "Tag billede"}
                                 <Text style={GlobalStyles.text}>
                                     {loading ? "Loading..." :"Tag billede"}
                                 </Text>
                             </TouchableOpacity>
 
-                            {/*Vend Kameraet om*/}
+                            {/*Vend Kameraet om}
                             <TouchableOpacity
                                 style={GlobalStyles.button}
                                 onPress={pickImage}
@@ -150,4 +150,174 @@ const PostScreen = ({navigation}) => {
     );
 };
 
+export default PostScreen; 
+
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  Image,
+  Alert,
+  ScrollView,
+  SafeAreaView,
+} from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { getDatabase, ref, push } from 'firebase/database';
+import { getApps, initializeApp } from "firebase/app";
+import * as firebase from 'firebase/app';
+*/
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  Image,
+  Alert,
+  ScrollView,
+  SafeAreaView
+} from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { getDatabase, ref, push } from 'firebase/database';
+import { getApps, initializeApp } from "firebase/app";
+
+
+const firebaseConfigStorage = {
+    apiKey: "AIzaSyCK6BHAOLDMY-8-CHT_LWQYbMLIkfPxHho",
+    authDomain: "database-6fbce.firebaseapp.com",
+    databaseURL: "https://database-6fbce-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "database-6fbce",
+    storageBucket: "database-6fbce.appspot.com",
+    messagingSenderId: "718630363488",
+    appId: "1:718630363488:web:ee7efb7f65d1092d837e05"
+  };
+  
+
+  // Vi kontrollerer at der ikke allerede er en initialiseret instans af firebase
+  // Så undgår vi fejlen Firebase App named '[DEFAULT]' already exists (app/duplicate-app).
+  
+  //const dbStorage = firebaseAppStorage.database();
+
+function PostScreen() {
+        // Initialize other firebase products here
+const firebaseAppStorage = initializeApp(firebaseConfigStorage, 'storage');
+
+  const db = getDatabase(firebaseAppStorage);
+
+  const initialState = {
+    imageURI: null,
+  };
+
+  const [newImage, setNewImage] = useState(initialState);
+  const [imagesArr, setImagesArr] = useState([]);
+
+  const changeImageURI = (uri) => {
+    setNewImage({ imageURI: uri });
+  };
+
+  const handleImageUpload = async () => {
+    try {
+      if (!newImage.imageURI) {
+        return Alert.alert('Please select an image to upload.');
+      }
+
+      // Define the path to the "Images" node where you want to push the new image data
+      const imagesRef = ref(db, '/Images/');
+
+      // Data to push
+      const newImageData = {
+        imageURI: newImage.imageURI,
+        // You can add more fields if needed
+      };
+
+      // Push the new image data to the "Images" node
+      await push(imagesRef, newImageData);
+
+      // Add the image URL to the imagesArr
+      setImagesArr([newImage.imageURI, ...imagesArr]);
+
+      // Reset the state and show a success message
+      setNewImage(initialState);
+      Alert.alert('Image uploaded successfully.');
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      Alert.alert('Error uploading image');
+    }
+  };
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setNewImage({ imageURI: result.uri });
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        <View style={styles.row}>
+          <Text style={styles.label}>Image</Text>
+          <Button title="Select Image" onPress={pickImage} />
+        </View>
+
+        {newImage.imageURI && (
+          <View style={styles.imageContainer}>
+            <Image source={{ uri: newImage.imageURI }} style={styles.image} />
+          </View>
+        )}
+
+        <Button title="Upload Image" onPress={handleImageUpload} />
+      </ScrollView>
+
+      <View style={styles.imageGallery}>
+        <Text style={styles.label}>Selected Images:</Text>
+        {imagesArr.length > 0 &&
+          imagesArr.map((imageURI, index) => (
+            <Image key={index} source={{ uri: imageURI }} style={styles.selectedImage} />
+          ))}
+      </View>
+    </SafeAreaView>
+  );
+}
+
 export default PostScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  row: {
+    flexDirection: 'row',
+    height: 30,
+    margin: 10,
+    alignItems: 'center',
+  },
+  label: {
+    fontWeight: 'bold',
+    width: 100,
+  },
+  imageContainer: {
+    alignItems: 'center',
+  },
+  image: {
+    width: 200,
+    height: 200,
+  },
+  imageGallery: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  selectedImage: {
+    width: 100,
+    height: 100,
+    margin: 5,
+  },
+}); 
