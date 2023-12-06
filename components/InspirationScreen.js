@@ -82,11 +82,18 @@ const styles = StyleSheet.create({
     height: 200,
   },
 }); */
+
+
+// Virker
+
+/*
 import React, { useState, useEffect } from 'react';
 import { View, Image, StyleSheet, Text, FlatList, Dimensions } from 'react-native';
 import { getDatabase, ref, onValue } from 'firebase/database';
 import { getApps, initializeApp } from "firebase/app";
 import GlobalStyles from '../globalStyling/GlobalStyles';
+import { SearchBar } from 'react-native-elements';
+
 
 
 const { width } = Dimensions.get('window');
@@ -148,6 +155,84 @@ const firebaseAppStorage = initializeApp(firebaseConfigStorage, 'storage');
       numColumns={columnCount}
       contentContainerStyle={GlobalStyles.InspirationContainer}
     />
+
+  );
+}
+
+export default InspirationScreen; 
+
+*/
+import React, { useState, useEffect } from 'react';
+import { View, Image, StyleSheet, Text, FlatList, Dimensions } from 'react-native';
+import { getDatabase, ref, onValue } from 'firebase/database';
+import { initializeApp } from "firebase/app";
+import { SearchBar } from 'react-native-elements';
+import GlobalStyles from '../globalStyling/GlobalStyles';
+
+const { width } = Dimensions.get('window');
+const columnCount = 2;
+
+const firebaseConfigStorage = {
+  apiKey: "AIzaSyCK6BHAOLDMY-8-CHT_LWQYbMLIkfPxHho",
+  authDomain: "database-6fbce.firebaseapp.com",
+  databaseURL: "https://database-6fbce-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "database-6fbce",
+  storageBucket: "database-6fbce.appspot.com",
+  messagingSenderId: "718630363488",
+  appId: "1:718630363488:web:ee7efb7f65d1092d837e05"
+};
+
+const firebaseAppStorage = initializeApp(firebaseConfigStorage, 'storage');
+
+function InspirationScreen() {
+  const db = getDatabase(firebaseAppStorage);
+
+  const [imagesArr, setImagesArr] = useState([]);
+  const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    const imagesRef = ref(db, 'Images');
+
+    const handleData = (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const imageUrls = Object.values(data).map((item) => item.imageURI);
+        setImagesArr(imageUrls.reverse());
+      }
+    };
+
+    const unsubscribe = onValue(imagesRef, handleData);
+
+    return () => {
+      unsubscribe();
+    };
+  }, [db]);
+
+
+  const renderItem = ({ item }) => (
+    <View style={GlobalStyles.imageContainer}>
+      <Image source={{ uri: item }} style={GlobalStyles.image} />
+    </View>
+  );
+
+  return (
+    <View style={GlobalStyles.inspirationContainer}>
+      <SearchBar
+        placeholder="Search..."
+        onChangeText={(text) => setSearch(text)}
+        value={search}
+        containerStyle={GlobalStyles.searchBarContainerInspiration}
+        inputContainerStyle={GlobalStyles.searchBarInputContainerInspiration}
+      />
+
+      <FlatList
+        data={imagesArr.filter((item) => item.includes(search))}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+        numColumns={columnCount}
+        contentContainerStyle={GlobalStyles.InspirationContainer}
+      />
+    </View>
   );
 }
 

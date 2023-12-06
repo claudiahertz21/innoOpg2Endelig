@@ -130,6 +130,34 @@ const GlobalStyles = StyleSheet.create({
         height: 100,
         margin: 5,
       },
+      searchBarContainerInspiration: {
+        backgroundColor: 'white',
+        borderBottomColor: 'transparent',
+        borderTopColor: 'transparent',
+        paddingHorizontal: 10,
+      },
+    
+      searchBarInputContainerInspiration: {
+        backgroundColor: '#EDEDED',
+      },
+    
+      inspirationContainer: {
+        justifyContent: 'space-evenly',
+      },
+    
+      imageContainerInspiration: {
+        flex: 1,
+        margin: 5,
+        aspectRatio: 1,
+        borderRadius: 10,
+        overflow: 'hidden',
+      },
+    
+      imageInspiration: {
+        flex: 1,
+        width: '100%',
+        resizeMode: 'cover',
+      },
 })
 
 export default GlobalStyles
