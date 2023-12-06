@@ -1,4 +1,8 @@
-import { StyleSheet} from "react-native";
+import { StyleSheet, Dimensions} from "react-native";
+
+const { width } = Dimensions.get('window');
+const columnCount = 2; // You can adjust the number of columns
+
 
 
 const GlobalStyles = StyleSheet.create({
@@ -78,7 +82,24 @@ const GlobalStyles = StyleSheet.create({
         margin: 10,
         padding: 10,
         width: 300
-    }
+    },
+    InspirationContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        padding: 5,
+      },
+      imageContainer: {
+        margin: 5,
+        width: width / columnCount - 10, // Adjust spacing based on the number of columns
+        height: width / columnCount, // Maintain aspect ratio
+        borderRadius: 8,
+        overflow: 'hidden',
+      },
+      image: {
+        flex: 1,
+        resizeMode: 'cover',
+      },
 })
 
 export default GlobalStyles

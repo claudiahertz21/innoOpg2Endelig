@@ -86,6 +86,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Image, StyleSheet, Text, FlatList, Dimensions } from 'react-native';
 import { getDatabase, ref, onValue } from 'firebase/database';
 import { getApps, initializeApp } from "firebase/app";
+import GlobalStyles from '../globalStyling/GlobalStyles';
 
 
 const { width } = Dimensions.get('window');
@@ -134,8 +135,8 @@ const firebaseAppStorage = initializeApp(firebaseConfigStorage, 'storage');
   }, [db]);
 
   const renderItem = ({ item }) => (
-    <View style={styles.imageContainer}>
-      <Image source={{ uri: item }} style={styles.image} />
+    <View style={GlobalStyles.imageContainer}>
+      <Image source={{ uri: item }} style={GlobalStyles.image} />
     </View>
   );
 
@@ -145,29 +146,10 @@ const firebaseAppStorage = initializeApp(firebaseConfigStorage, 'storage');
       renderItem={renderItem}
       keyExtractor={(item, index) => index.toString()}
       numColumns={columnCount}
-      contentContainerStyle={styles.container}
+      contentContainerStyle={GlobalStyles.InspirationContainer}
     />
   );
 }
 
 export default InspirationScreen;
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    padding: 5,
-  },
-  imageContainer: {
-    margin: 5,
-    width: width / columnCount - 10, // Adjust spacing based on the number of columns
-    height: width / columnCount, // Maintain aspect ratio
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  image: {
-    flex: 1,
-    resizeMode: 'cover',
-  },
-});
