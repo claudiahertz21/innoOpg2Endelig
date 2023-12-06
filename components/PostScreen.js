@@ -187,6 +187,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { getDatabase, ref, push } from 'firebase/database';
 import { getApps, initializeApp } from "firebase/app";
 import GlobalStyles from '../globalStyling/GlobalStyles';
+import RNPickerSelect from 'react-native-picker-select';
+
 
 
 const firebaseConfigStorage = {
@@ -213,7 +215,95 @@ const firebaseAppStorage = initializeApp(firebaseConfigStorage, 'storage');
 
   const initialState = {
     imageURI: null,
+    selectedTag: null, // New state for selected tag
+
   };
+  const [newImage, setNewImage] = useState(initialState);
+  const [imagesArr, setImagesArr] = useState([]);
+
+  const changeImageURI = (uri) => {
+    setNewImage({ ...newImage, imageURI: uri });
+  };
+
+  const handleImageUpload = async () => {
+    try {
+      if (!newImage.imageURI || !newImage.selectedTag) {
+        return Alert.alert('Please select an image and a tag to upload.');
+      }
+
+      const imagesRef = ref(db, '/Images/');
+
+      const newImageData = {
+        imageURI: newImage.imageURI,
+        selectedTag: newImage.selectedTag,
+      };
+
+      await push(imagesRef, newImageData);
+
+      setImagesArr([newImage.imageURI, ...imagesArr]);
+
+      setNewImage(initialState);
+      Alert.alert('Image uploaded successfully.');
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      Alert.alert('Error uploading image');
+    }
+  };
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setNewImage({ ...newImage, imageURI: result.uri });
+    }
+  };
+
+  return (
+    <SafeAreaView style={GlobalStyles.PostContainer}>
+      <ScrollView>
+        <View style={GlobalStyles.row}>
+          <Text style={GlobalStyles.label}>Image</Text>
+          <Button title="Select Image" onPress={pickImage} />
+        </View>
+
+        {newImage.imageURI && (
+          <View style={GlobalStyles.PostImageContainer}>
+            <Image source={{ uri: newImage.imageURI }} style={GlobalStyles.PostImage} />
+          </View>
+        )}
+
+        <View style={GlobalStyles.row}>
+          <Text style={GlobalStyles.label}>Tag</Text>
+          <RNPickerSelect
+            onValueChange={(value) => setNewImage({ ...newImage, selectedTag: value })}
+            items={[
+              { label: 'Animals', value: 'animals' },
+              { label: 'Color', value: 'Color' },
+              // Add more tags as needed
+            ]}
+          />
+        </View>
+
+        <Button title="Upload Image" onPress={handleImageUpload} />
+      </ScrollView>
+
+      <View style={GlobalStyles.imageGallery}>
+        <Text style={GlobalStyles.label}>Selected Images:</Text>
+        {imagesArr.length > 0 &&
+          imagesArr.map((imageURI, index) => (
+            <Image key={index} source={{ uri: imageURI }} style={GlobalStyles.selectedImage} />
+          ))}
+      </View>
+    </SafeAreaView>
+  );
+}
+
+export default PostScreen;
+  /*
 
   const [newImage, setNewImage] = useState(initialState);
   const [imagesArr, setImagesArr] = useState([]);
@@ -234,6 +324,7 @@ const firebaseAppStorage = initializeApp(firebaseConfigStorage, 'storage');
       // Data to push
       const newImageData = {
         imageURI: newImage.imageURI,
+        selectedTag: null, // New state for selected tag
         // You can add more fields if needed
       };
 
