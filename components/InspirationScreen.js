@@ -182,9 +182,10 @@ const firebaseConfigStorage = {
   appId: "1:718630363488:web:ee7efb7f65d1092d837e05"
 };
 
-const firebaseAppStorage = initializeApp(firebaseConfigStorage, 'storage');
 
 function InspirationScreen() {
+    const firebaseAppStorage = initializeApp(firebaseConfigStorage, 'storage');
+
   const db = getDatabase(firebaseAppStorage);
 
   const [imagesArr, setImagesArr] = useState([]);
