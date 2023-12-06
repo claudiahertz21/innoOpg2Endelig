@@ -315,13 +315,7 @@ const firebaseAppStorage = initializeApp(firebaseConfigStorage, 'storage');
         <Button title="Upload Image" onPress={handleImageUpload} />
       </ScrollView>
 
-      <View style={GlobalStyles.imageGallery}>
-        <Text style={GlobalStyles.label}>Selected Images:</Text>
-        {imagesArr.length > 0 &&
-          imagesArr.map((imageURI, index) => (
-            <Image key={index} source={{ uri: imageURI }} style={GlobalStyles.selectedImage} />
-          ))}
-      </View>
+      
     </SafeAreaView>
   );
 }
