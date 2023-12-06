@@ -100,6 +100,36 @@ const GlobalStyles = StyleSheet.create({
         flex: 1,
         resizeMode: 'cover',
       },
+      PostContainer: {
+        flex: 1,
+        justifyContent: 'center',
+      },
+      row: {
+        flexDirection: 'row',
+        height: 30,
+        margin: 10,
+        alignItems: 'center',
+      },
+      label: {
+        fontWeight: 'bold',
+        width: 100,
+      },
+      PostImageContainer: {
+        alignItems: 'center',
+      },
+      PostImage: {
+        width: 200,
+        height: 200,
+      },
+      imageGallery: {
+        marginTop: 20,
+        alignItems: 'center',
+      },
+      selectedImage: {
+        width: 100,
+        height: 100,
+        margin: 5,
+      },
 })
 
 export default GlobalStyles

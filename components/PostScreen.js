@@ -182,6 +182,7 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import { getDatabase, ref, push } from 'firebase/database';
 import { getApps, initializeApp } from "firebase/app";
+import GlobalStyles from '../globalStyling/GlobalStyles';
 
 
 const firebaseConfigStorage = {
@@ -260,27 +261,27 @@ const firebaseAppStorage = initializeApp(firebaseConfigStorage, 'storage');
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={GlobalStyles.PostContainer}>
       <ScrollView>
-        <View style={styles.row}>
-          <Text style={styles.label}>Image</Text>
+        <View style={GlobalStyles.row}>
+          <Text style={GlobalStyles.label}>Image</Text>
           <Button title="Select Image" onPress={pickImage} />
         </View>
 
         {newImage.imageURI && (
-          <View style={styles.imageContainer}>
-            <Image source={{ uri: newImage.imageURI }} style={styles.image} />
+          <View style={GlobalStyles.PostImageContainer}>
+            <Image source={{ uri: newImage.imageURI }} style={GlobalStyles.PostImage} />
           </View>
         )}
 
         <Button title="Upload Image" onPress={handleImageUpload} />
       </ScrollView>
 
-      <View style={styles.imageGallery}>
-        <Text style={styles.label}>Selected Images:</Text>
+      <View style={GlobalStyles.imageGallery}>
+        <Text style={GlobalStyles.label}>Selected Images:</Text>
         {imagesArr.length > 0 &&
           imagesArr.map((imageURI, index) => (
-            <Image key={index} source={{ uri: imageURI }} style={styles.selectedImage} />
+            <Image key={index} source={{ uri: imageURI }} style={GlobalStyles.selectedImage} />
           ))}
       </View>
     </SafeAreaView>
@@ -288,36 +289,3 @@ const firebaseAppStorage = initializeApp(firebaseConfigStorage, 'storage');
 }
 
 export default PostScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  row: {
-    flexDirection: 'row',
-    height: 30,
-    margin: 10,
-    alignItems: 'center',
-  },
-  label: {
-    fontWeight: 'bold',
-    width: 100,
-  },
-  imageContainer: {
-    alignItems: 'center',
-  },
-  image: {
-    width: 200,
-    height: 200,
-  },
-  imageGallery: {
-    marginTop: 20,
-    alignItems: 'center',
-  },
-  selectedImage: {
-    width: 100,
-    height: 100,
-    margin: 5,
-  },
-}); 
